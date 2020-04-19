@@ -1,42 +1,74 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Display Webcam Stream</title>
+	<head>
+		<meta charset="utf-8">
+		<title>Face Off - A CSUEB/SJSU Game Jam Project</title>
  
-<style>
-#container {
-	margin: 0px auto;
-	width: 500px;
-	height: 375px;
-	border: 10px #333 solid;
-}
-#videoElement {
-	width: 500px;
-	height: 375px;
-	background-color: #666;
-}
-</style>
-</head>
+		<style>
+		#container {
+			margin: 0px auto;
+			width: 500px;
+			height: 375px;
+			border: 10px #333 solid;
+		}
+		#videoElement {
+			width: 500px;
+			height: 375px;
+			background-color: #666;
+		}
+		#button {
+			text-align: center;
+		}
+		#timer {
+			text-align: center;
+			font: 100px Monaco;
+		}
+		</style>
+	</head>
  
-<body>
-<div id="container">
-	<video autoplay="true" id="videoElement">
+	<body>
+		<div id="container">
+			<video autoplay="true" id="videoElement">
 	
-	</video>
-</div>
-<script>
-var video = document.querySelector("#videoElement");
+			</video>
+		</div>
+		<script>
+			var video = document.querySelector("#videoElement");
 
-if (navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(function (stream) {
-      video.srcObject = stream;
-    })
-    .catch(function (err0r) {
-      console.log("Something went wrong!");
-    });
-}
-</script>
-</body>
+			if (navigator.mediaDevices.getUserMedia) {
+				navigator.mediaDevices.getUserMedia({ video: true })
+    				.then(function (stream) {
+      					video.srcObject = stream;
+    				})
+    				.catch(function (err0r) {
+      					console.log("Something went wrong!");
+    				});
+			}
+		</script>
+		<br>
+		<br>
+		<script>
+			let endTime = (+localStorage.endTime || 0);
+			function setTimer() {
+				endTime = localStorage.endTime = 60e3 + Date.now();
+				update();
+			}
+			function update() {
+				let timeLeft = endTime - Date.now();
+				if (timeLeft < 9) {
+					setText('--:--');
+				} else {
+					let minutes = Math.floor(timeLeft / 60e3);
+					let seconds = Math.floor(timeLeft / 1e3) % 60;
+					setText(`${minutes}:${seconds.toString(10).padStart(2, '0')}`);
+				}
+			}
+			function setText(text) {
+				document.getElementById('timer').textContent = text;
+			}
+			setInterval(update, 200);
+		</script>
+		<div id="button"><button onclick="setTimer()">Start the clock</button></div>
+		<div id="timer"></div>
+	</body>
 </html>
